@@ -20,6 +20,10 @@ import matplotlib.pyplot as plt
 import re
 
 def plot_training_losses(log_file_path, output_image_path):
+    """
+    可视化训练过程中的各种损失值
+    """
+    # 初始化存储数据的列表
     epochs = []
     iterations = []
     losses = []
@@ -27,10 +31,11 @@ def plot_training_losses(log_file_path, output_image_path):
     clip_losses_img = []
     clip_losses_text = []
 
+    # 定义正则表达式模式
     log_pattern = re.compile(
         r'Train: Epoch (\d+) - iter (\d+) - loss ([\d.]+) - MAEloss ([\d.]+) - CLIPloss_img ([\d.]+)- CLIPloss_text ([\d.]+)'
     )
-
+    # 打开日志文件并逐行读取
     with open(log_file_path, 'r') as log_file:
         for line in log_file:
             match = log_pattern.search(line)
@@ -49,26 +54,38 @@ def plot_training_losses(log_file_path, output_image_path):
                 clip_losses_img.append(clip_loss_img)
                 clip_losses_text.append(clip_loss_text)
 
+    # 创建x轴标签
     x_labels = [f"{epoch}-{iteration}" for epoch, iteration in zip(epochs, iterations)]
 
+    # 创建绘图
     plt.figure(figsize=(12, 6))
     plt.plot(x_labels, losses, label='Loss')
     plt.plot(x_labels, mae_losses, label='MAEloss')
     plt.plot(x_labels, clip_losses_img, label='CLIPloss_img')
     plt.plot(x_labels, clip_losses_text, label='CLIPloss_text')
 
+    # 设置x轴标签
     plt.xlabel('Epoch-Iteration')
+    # 设置y轴标签
     plt.ylabel('Loss')
+    # 设置标题
     plt.title('Training Losses Over Epochs and Iterations')
+    # 添加图例
     plt.legend()
+    # 设置x轴标签旋转
     plt.xticks(rotation=45, ha='right')
+    # 添加网格
     plt.grid(True)
 
+    # 保存图像  
     plt.savefig(output_image_path)
 
 
 
 def splitdf(df,col='orgid',test_size=.2):
+    """
+    将数据集按指定列分组并随机分割为训练集和测试集
+    """
     if col==None:
         from sklearn.model_selection import train_test_split
         train, test = train_test_split(df, test_size=test_size, random_state=42,stratify=None)
@@ -84,7 +101,9 @@ def splitdf(df,col='orgid',test_size=.2):
 
 
 def set_random_seeds(random_seed=0):
-
+    """
+    设置随机种子以确保结果可复现
+    """
     torch.manual_seed(random_seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
@@ -95,9 +114,8 @@ def parse_argument():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_type", type=str, default="clip", choices=("clip"))
 
-    parser.add_argument(
-        "--dataset_path", type=str, default="./data/"
-    )
+    parser.add_argument("--dataset_path", type=str, default="./data/")
+
     parser.add_argument("--batch_size", type=int, default=200)
     parser.add_argument("--epochs", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=0)
@@ -174,7 +192,6 @@ class MAE_dataset(Dataset):
             print(f'Skipped sample (index {idx}, file {self.orgid[idx]}). {str(e)}')
             return self.__getitem__((idx + 1) % len(self.orgid))
         return image
-
 
 class img2img_dataset(Dataset):
     def __init__(self, dt, col='orgid'):
