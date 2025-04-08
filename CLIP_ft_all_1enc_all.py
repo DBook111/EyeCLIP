@@ -15,7 +15,9 @@ import logging
 import time
 from datetime import datetime
 import pandas as pd
+
 import util.lr_sched as lr_sched
+
 import matplotlib.pyplot as plt
 import re
 
@@ -81,7 +83,6 @@ def plot_training_losses(log_file_path, output_image_path):
     plt.savefig(output_image_path)
 
 
-
 def splitdf(df,col='orgid',test_size=.2):
     """
     将数据集按指定列分组并随机分割为训练集和测试集
@@ -114,12 +115,12 @@ def parse_argument():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_type", type=str, default="clip", choices=("clip"))
 
-    parser.add_argument("--dataset_path", type=str, default="./data/")
+    parser.add_argument("--dataset_path", type=str, default="/home/image/nvme/ZhouZhiLin/zhouzhilin/FoundationModel/EyeCLIP/data")
 
     parser.add_argument("--batch_size", type=int, default=200)
     parser.add_argument("--epochs", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--out_dir", default="./ft_checkpoints")
+    parser.add_argument("--out_dir", default="/home/image/nvme/ZhouZhiLin/zhouzhilin/FoundationModel/EyeCLIP/ft_checkpoints")
     parser.add_argument("--checkpoint", type=str, default="")
     parser.add_argument("--eval", dest="eval", action="store_true")
 
@@ -271,10 +272,11 @@ if __name__ == "__main__":
     if not os.path.exists(args.out_dir):
         os.makedirs(args.out_dir)
 
+    # 创建args.txt文件，将命令行参数（args）保存到一个文本文件中
     with open(os.path.join(args.out_dir, 'args.txt'), 'w') as file:
         for key, value in vars(args).items():
             file.write(f'{key}: {value}\n')
-    dt = pd.read_csv("data/clip_mae_all_fixed.csv")
+    dt = pd.read_csv("/home/image/nvme/ZhouZhiLin/zhouzhilin/FoundationModel/EyeCLIP/data/clip_mae_all_fixed.csv")
 
     dt_train = dt
     dt_train.to_csv(os.path.join(args.out_dir, "train.csv"))

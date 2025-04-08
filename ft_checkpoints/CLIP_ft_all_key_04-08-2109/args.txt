@@ -1,0 +1,12 @@
+model_type: clip
+dataset_path: /home/image/nvme/ZhouZhiLin/zhouzhilin/FoundationModel/EyeCLIP/data
+batch_size: 200
+epochs: 3000
+seed: 0
+out_dir: /home/image/nvme/ZhouZhiLin/zhouzhilin/FoundationModel/EyeCLIP/ft_checkpoints/CLIP_ft_all_key_04-08-2109
+checkpoint: 
+eval: False
+lr: 0.00078125
+blr: 0.001
+min_lr: 0.0
+warmup_epochs: 2
